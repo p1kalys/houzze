@@ -1,17 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const vacancyRoutes = require('./routes/vacancyRouter');
-const userRoutes = require('./routes/userRouter'); // Assuming you already have this
+const userRoutes = require('./routes/userRouter');
 require('dotenv').config();
 const cors = require('cors');
 
 const app = express();
 
-app.use(express.json()); // For parsing JSON requests
+app.use(express.json());
 const corsOptions = {
-  origin: 'http://localhost:5173', // Replace with the frontend URL
-  credentials: true, // Allow cookies if required
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  origin: 'https://houzzee.vercel.app/', 
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
 
 app.use(cors(corsOptions));
