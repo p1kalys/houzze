@@ -1,6 +1,20 @@
 import { ChevronDown, ChevronUp, MapPin, DollarSign, Calendar } from 'lucide-react';
 
 export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
+  const handleOpenMaps = () => {
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      `${vacancy.address}, ${vacancy.postcode}`
+    )}`;
+    window.open(mapsUrl, '_blank');
+  };
+
+  const truncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+      return `${text.slice(0, maxLength)}...`;
+    }
+    return text;
+  };
+
   return (
     <div
       className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ${isExpanded ? 'ring-2 ring-indigo-500' : 'hover:shadow-lg'
@@ -9,7 +23,7 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
       <div className="p-4">
         {/* Header with Title and Expand Button */}
         <div className="flex justify-between items-start cursor-pointer" onClick={onToggle}>
-          <h2 className="text-xl font-semibold text-gray-800">{vacancy.title}</h2>
+          <h2 className="text-xl font-semibold text-gray-800">{truncateText(vacancy.description, 100)}</h2>
           <button
             onClick={onToggle}
             className="p-1 hover:bg-gray-100 rounded-full transition-colors"
@@ -25,7 +39,7 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
         {/* Basic Details */}
         <div className="mt-2 text-gray-600">
           <div className="flex flex-col justify-between md:flex-row md:space-x-4">
-            <p className="text-sm flex items-center">
+            <p className="text-sm flex text-indigo-700 hover:text-indigo-400 items-center" onClick={handleOpenMaps}>
               <MapPin className="h-4 w-4 mr-1 text-gray-500" />
               {vacancy.address}, {vacancy.postcode}
             </p>
@@ -39,7 +53,7 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
         {/* Expanded View */}
         {isExpanded && (
           <div className="mt-4 animate-fadeIn">
-            <p className="text-gray-700 whitespace-pre-line">{vacancy.description}</p>
+            <p className="text-gray-700 whitespace-pre-line">{vacancy.title} - {vacancy.description}</p>
             <p className="text-sm flex items-center mt-1">
               <DollarSign className="h-4 w-4 mr-1 text-gray-500" />
               Rent: ₹{vacancy.rent} / Deposit: ₹{vacancy.deposit}
@@ -80,7 +94,12 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
             {/* Contact Details */}
             <div className="mt-4 pt-4 border-t border-gray-200">
               <h3 className="text-sm font-semibold text-gray-800">Contact:</h3>
-              <p className="text-sm text-gray-700">{vacancy.contact}</p>
+              <a
+                href={`tel:${vacancy.contact}`}
+                className="text-sm text-indigo-700 hover:text-indigo-500"
+              >
+                {vacancy.contact}
+              </a>
             </div>
           </div>
         )}

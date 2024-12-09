@@ -11,7 +11,7 @@ const createVacancyValidator = z.object({
   postcode: z.string().min(4, "Postcode must be at least 4 characters long"),
   bedrooms: z.number().int().positive("Bedrooms must be a positive integer"),
   bathrooms: z.number().int().positive("Bathrooms must be a positive integer"),
-  contact: z.string().regex(/^\+?[1-9]\d{1,14}$/,"Contact must be a valid international phone number (E.164 format)"),
+  contact: z.string().regex(/^\+?[0-9]\d{1,14}$/,"Contact must be a valid international phone number (E.164 format)"),
   benefits: z.string().optional(),
   bills: z.boolean(),
   nationality: z.string().optional(),
