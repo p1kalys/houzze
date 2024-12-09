@@ -32,7 +32,9 @@ export const ProfilePage = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-20">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">
+      <div className="loader border-t-indigo-500 border-4 w-12 h-12 rounded-full animate-spin"></div>
+    </div>;
   }
 
   if (error) {
@@ -75,13 +77,13 @@ export const ProfilePage = () => {
             <div className="mt-4 space-y-4">
               {vacancies.map((vacancy) => (
                 <VacancyCard
-                key={vacancy._id}
-                vacancy={vacancy}
-                isExpanded={expandVacancyId === vacancy._id}
-                onToggle={() => setExpandVacancyId(
-                  expandVacancyId === vacancy._id ? null : vacancy._id
-                )}
-              />
+                  key={vacancy._id}
+                  vacancy={vacancy}
+                  isExpanded={expandVacancyId === vacancy._id}
+                  onToggle={() => setExpandVacancyId(
+                    expandVacancyId === vacancy._id ? null : vacancy._id
+                  )}
+                />
               ))}
             </div>
           )}

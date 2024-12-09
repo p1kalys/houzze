@@ -39,7 +39,7 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
         {/* Basic Details */}
         <div className="mt-2 text-gray-600">
           <div className="flex flex-col justify-between md:flex-row md:space-x-4">
-            <p className="text-sm flex text-indigo-700 hover:text-indigo-400 items-center" onClick={handleOpenMaps}>
+            <p className="text-sm flex text-indigo-700 hover:text-indigo-400 items-center cursor-pointer" onClick={handleOpenMaps}>
               <MapPin className="h-4 w-4 mr-1 text-gray-500" />
               {vacancy.address}, {vacancy.postcode}
             </p>
