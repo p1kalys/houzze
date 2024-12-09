@@ -15,6 +15,7 @@ function App() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [expandVacancyId, setExpandVacancyId] = useState(null);
   const [allVacancies, setAllVacancies] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
     search: '',
@@ -69,10 +70,13 @@ function App() {
 
   const fetchVacancies = async (appliedFilters = {}) => {
     try {
+      setLoading(true);
       const res = await API.get('/vacancies/', { params: appliedFilters });
       setAllVacancies(res.data.vacancies);
     } catch (error) {
       console.error("Error fetching vacancies:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,16 +152,24 @@ function App() {
               applyFilter={applyFilters}
             />
             <div className="grid gap-6">
-              {allVacancies.length > 0 && allVacancies.map((vacancy) => (
-                <VacancyCard
-                  key={vacancy._id}
-                  vacancy={vacancy}
-                  isExpanded={expandVacancyId === vacancy._id}
-                  onToggle={() => setExpandVacancyId(
-                    expandVacancyId === vacancy._id ? null : vacancy._id
-                  )}
-                />
-              ))}
+              {(loading) ?
+                <div className="flex justify-center items-center h-screen">
+                  <div className="loader border-t-indigo-500 border-4 w-12 h-12 rounded-full animate-spin"></div>
+                </div>
+                : (
+                  allVacancies.length > 0 ? allVacancies.map((vacancy) => (
+                    <VacancyCard
+                      key={vacancy._id}
+                      vacancy={vacancy}
+                      isExpanded={expandVacancyId === vacancy._id}
+                      onToggle={() => setExpandVacancyId(
+                        expandVacancyId === vacancy._id ? null : vacancy._id
+                      )}
+                    />
+                  )) : <>
+                    No Vacancies available
+                  </>
+                )}
             </div>
           </div>
         } />
