@@ -4,7 +4,7 @@ const { createVacancyValidator } = require("../validators/vacancyValidator");
 // Create a new vacancy
 const createVacancy = async (req, res) => {
   try {
-    const data = createVacancyValidator.parse(req.body); // Validate input with Zod
+    const data = createVacancyValidator.parse(req.body);
     const vacancy = new Vacancy({ ...data, createdBy: req.user._id });
 
     await vacancy.save();
@@ -18,11 +18,15 @@ const getVacancies = async (req, res) => {
   try {
     const filters = req.query;
     const query = {};
-
     // Search filters
-    if (filters.address) query.address = new RegExp(filters.address, "i"); // Case-insensitive search
+    if (filters.address) query.address = new RegExp(filters.address, "i");
     if (filters.roomType) query.roomType = filters.roomType;
-    if (filters.preferredType) query.preferredType = filters.preferredType;
+    if (filters.preferredType) {
+      const preferredTypes = Array.isArray(filters.preferredType)
+        ? filters.preferredType
+        : [filters.preferredType];
+      query.preferredType = { $in: preferredTypes };
+    }
     if (filters.postcode) query.postcode = filters.postcode;
     if (filters.category) query.category = filters.category;
     if (filters.nationality) query.nationality = filters.nationality;
@@ -92,4 +96,47 @@ const getVacancies = async (req, res) => {
   }
 };
 
-module.exports = { createVacancy, getVacancies };
+const updateVacancy = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = createVacancyValidator.parse(req.body);
+
+    const vacancy = await Vacancy.findOneAndUpdate(
+      { _id: id, createdBy: req.user._id },
+      { $set: data },
+      { new: true, runValidators: true }
+    );
+
+    if (!vacancy) {
+      return res.status(404).json({ message: "Vacancy not found or unauthorized." });
+    }
+
+    res.status(200).json({ message: "Vacancy updated successfully", vacancy });
+  } catch (error) {
+    res.status(400).json({ message: error.message || "Validation error" });
+  }
+};
+
+// Delete a vacancy
+const deleteVacancy = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const vacancy = await Vacancy.findOneAndDelete({
+      _id: id,
+      createdBy: req.user._id,
+    });
+
+    if (!vacancy) {
+      return res.status(404).json({ message: "Vacancy not found or unauthorized." });
+    }
+
+    res.status(200).json({ message: "Vacancy deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message || "An error occurred while deleting the vacancy." });
+  }
+};
+
+
+module.exports = { createVacancy, getVacancies, updateVacancy, deleteVacancy };

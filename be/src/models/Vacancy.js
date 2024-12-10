@@ -14,7 +14,7 @@ const VacancySchema = new mongoose.Schema({
   bills: { type: Boolean, default: false },
   nationality: { type: String },
   roomType: { type: String, enum: ['1BHK','2BHK', '3BHK', '4BHK', '5BHK'], required: true },
-  preferredType: { type: String, enum: ['Student', 'Boy', 'Girl', 'Professional', 'Couple'] },
+  preferredType: { type: [String], enum: ['Student', 'Boy', 'Girl', 'Professional', 'Couple', 'Any'] },
   parking: { type: Boolean, default: false },
   available: { type: Date, required: true, default: Date.now() },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

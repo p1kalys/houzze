@@ -66,7 +66,7 @@ function App() {
     if (token) {
       setIsLoggedIn(true);
     }
-  }, [])
+  }, [navigate]);
 
   const fetchVacancies = async (appliedFilters = {}) => {
     try {

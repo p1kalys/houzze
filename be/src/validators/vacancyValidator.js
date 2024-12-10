@@ -4,13 +4,13 @@ const createVacancyValidator = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   description: z
     .string()
-    .min(10, "Description must be at least 10 characters long"),
-  rent: z.number().positive("Rent must be a positive number"),
-  deposit: z.number().positive("Deposit must be a positive number"),
+    .min(5, "Description must be at least 5 characters long"),
+  rent: z.number().int().min(0,"Rent must be a positive number"),
+  deposit: z.number().int().min(0,"Deposit must be a positive number"),
   address: z.string().min(5, "Address must be at least 3 characters long"),
   postcode: z.string().min(4, "Postcode must be at least 4 characters long"),
-  bedrooms: z.number().int().positive("Bedrooms must be a positive integer"),
-  bathrooms: z.number().int().positive("Bathrooms must be a positive integer"),
+  bedrooms: z.number().int().min(0, "Bedrooms must be a positive integer"),
+  bathrooms: z.number().int().min(0, "Bathrooms must be a positive integer"),
   contact: z.string().regex(/^\+?[0-9]\d{1,14}$/,"Contact must be a valid international phone number (E.164 format)"),
   benefits: z.string().optional(),
   bills: z.boolean(),
@@ -20,13 +20,15 @@ const createVacancyValidator = z.object({
     "Invalid room type"
   ),
   preferredType: z
-    .enum(["Student", "Boy", "Girl", "Professional", "Couple"])
+    .array(
+      z.enum(["Student", "Boy", "Girl", "Professional", "Couple", "Any"], "Invalid preferred type")
+    )
     .optional(),
   parking: z.boolean().optional(),
   available: z
     .string()
     .transform((str) => new Date(str))
-    .optional(), // Converts string to Date
+    .optional(),
 });
 
 module.exports = { createVacancyValidator };

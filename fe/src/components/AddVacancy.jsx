@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import API from '../api';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,8 +17,8 @@ export const AddVacancyForm = ({ refetch }) => {
     bills: 'false',
     nationality: '',
     roomType: '',
-    preferredType: '',
-    parking: 'false', 
+    preferredType: [],
+    parking: 'false',
     available: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +48,7 @@ export const AddVacancyForm = ({ refetch }) => {
         bills: 'false',
         nationality: '',
         roomType: '',
-        preferredType: '',
+        preferredType: [],
         parking: 'false',
         available: '',
       });
@@ -78,16 +78,39 @@ export const AddVacancyForm = ({ refetch }) => {
     setFormData({ ...formData, [field]: value });
   };
 
+  const handleCheckboxChange = (field, value) => {
+    setFormData((prevState) => {
+      const updatedField = [...prevState[field]];
+
+      // Toggle value in array
+      if (updatedField.includes(value)) {
+        return {
+          ...prevState,
+          [field]: updatedField.filter((item) => item !== value),
+        };
+      } else {
+        return {
+          ...prevState,
+          [field]: [...updatedField, value],
+        };
+      }
+    });
+  };
+
+  useEffect(() => {
+    console.log("ff", formData);
+  },[formData]);
+
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">Add Vacancy Form</h2>
           {error && (
-          <div className="mb-4 p-4 text-red-800 bg-red-100 border border-red-300 rounded-md">
-            {error}
-          </div>
-        )}
+            <div className="mb-4 p-4 text-red-800 bg-red-100 border border-red-300 rounded-md">
+              {error}
+            </div>
+          )}
 
           {/* Title */}
           <div>
@@ -170,6 +193,7 @@ export const AddVacancyForm = ({ refetch }) => {
               type="number"
               id="rent"
               value={formData.rent}
+              min="0"
               onChange={(e) => handleChange('rent', Number(e.target.value))}
               className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
               required
@@ -185,6 +209,7 @@ export const AddVacancyForm = ({ refetch }) => {
               type="number"
               id="deposit"
               value={formData.deposit}
+              min="0"
               onChange={(e) => handleChange('deposit', Number(e.target.value))}
               className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
               required
@@ -229,6 +254,7 @@ export const AddVacancyForm = ({ refetch }) => {
             <input
               type="number"
               id="bedrooms"
+              min="0"
               value={formData.bedrooms}
               onChange={(e) => handleChange('bedrooms', Number(e.target.value))}
               className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
@@ -244,6 +270,7 @@ export const AddVacancyForm = ({ refetch }) => {
             <input
               type="number"
               id="bathrooms"
+              min="0"
               value={formData.bathrooms}
               onChange={(e) => handleChange('bathrooms', Number(e.target.value))}
               className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
@@ -291,22 +318,29 @@ export const AddVacancyForm = ({ refetch }) => {
 
           {/* Preferred Type */}
           <div>
-            <label htmlFor="preferredType" className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700">
               Preferred Tenant Type
             </label>
-            <select
-              id="preferredType"
-              value={formData.preferredType}
-              onChange={(e) => handleChange('preferredType', e.target.value)}
-              className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
-            >
-              <option value="">Select Tenant Type</option>
-              <option value="Student">Student</option>
-              <option value="Boy">Boy</option>
-              <option value="Girl">Girl</option>
-              <option value="Professional">Professional</option>
-              <option value="Couple">Couple</option>
-            </select>
+            <div className="mt-2 space-y-2">
+              {["Student", "Boy", "Girl", "Professional", "Couple", "Any"].map((type) => (
+                <div key={type} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`preferredType-${type}`}
+                    value={type}
+                    checked={formData.preferredType.includes(type)}
+                    onChange={() => handleCheckboxChange("preferredType", type)}
+                    className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  />
+                  <label
+                    htmlFor={`preferredType-${type}`}
+                    className="ml-2 text-sm text-gray-700"
+                  >
+                    {type}
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Parking */}

@@ -74,7 +74,9 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
               {/* Room & Preferred Type */}
               <div className="text-sm text-gray-600">
                 <p>Room Type: {vacancy.roomType}</p>
-                <p>Preferred Tenant: {vacancy.preferredType || 'Any'}</p>
+                <p>Preferred Tenant:  {vacancy.preferredType.length > 0
+                ? vacancy.preferredType.join(", ")
+                : "Any"}</p>
               </div>
               {/* Nationality & Bills */}
               <div className="text-sm text-gray-600">
