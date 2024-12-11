@@ -1,23 +1,67 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import API from '../api';
 
-export const AuthModal = ({ type, onSubmit }) => {
+export const AuthModal = ({ type, setIsLoggedIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const handleLogin = async (credentials) => {
+    try {
+      const res = await API.post('/users/login', credentials);
+      setIsLoggedIn(true);
+      localStorage.setItem('token', res.data.token);
+      navigate('/');
+    } catch (error) {
+      setError(error.response.data.message || "Error occurred, Please try again.");
+      console.error("Login failed:", error);
+    }
+  };
+
+  const handleSignup = async (credentials) => {
+    try {
+      await API.post('/users/register', credentials);
+      navigate('/login');
+    } catch (error) {
+      setError(error.response.data.message || "Error occurred, Please try again.");
+      console.error("Signup failed:", error);
+    }
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    return password.length >= 6;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (!validatePassword(password)) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+    setError('');
+
     if (type === 'signup') {
-      onSubmit({
+      handleSignup({
         name: name,
         email: email,
         password: password,
       });
     } else {
-      onSubmit({
+      handleLogin({
         email: email,
         password: password,
       });
@@ -85,10 +129,10 @@ export const AuthModal = ({ type, onSubmit }) => {
                 placeholder="Enter your password"
               />
             </div>
-
+            {error && <p className='text-red-700'>{error}</p>}
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-500 transition-colors"
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-500 transition-transform transform active:scale-95 transition-colors"
             >
               {type === 'login' ? 'Sign In' : 'Sign Up'}
             </button>

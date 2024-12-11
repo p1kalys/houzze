@@ -80,27 +80,6 @@ function App() {
     }
   };
 
-
-  const handleLogin = async (credentials) => {
-    try {
-      const res = await API.post('/users/login', credentials);
-      setIsLoggedIn(true);
-      localStorage.setItem('token', res.data.token);
-      navigate('/');
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  };
-
-  const handleSignup = async (credentials) => {
-    try {
-      await API.post('/users/register', credentials);
-      navigate('/login');
-    } catch (error) {
-      console.error("Signup failed:", error);
-    }
-  };
-
   const handleLogout = async () => {
     try {
       await API.post('/users/logout');
@@ -125,8 +104,8 @@ function App() {
       />
 
       <Routes>
-        <Route path="/login" element={<AuthModal type="login" onSubmit={handleLogin} />} />
-        <Route path="/signup" element={<AuthModal type="signup" onSubmit={handleSignup} />} />
+        <Route path="/login" element={<AuthModal type="login" setIsLoggedIn={setIsLoggedIn}  />} />
+        <Route path="/signup" element={<AuthModal type="signup" setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/" element={
           <div className="max-w-9xl max-h-screen mx-auto px-4 py-8 pt-28">
             <div className="flex items-center gap-2 mb-8">
