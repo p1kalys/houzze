@@ -24,7 +24,28 @@ export const AddVacancyForm = ({ refetch }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [selectedCountryCode, setSelectedCountryCode] = useState('+44');
+  const [phoneNo, setPhoneNo] = useState('');
 
+  const countryCodes = [
+    { code: 'GB', name: 'United Kingdom', phoneCode: '+44' },
+    { code: 'US', name: 'United States', phoneCode: '+1' },
+    { code: 'CA', name: 'Canada', phoneCode: '+1' },
+    { code: 'AU', name: 'Australia', phoneCode: '+61' },
+    { code: 'DE', name: 'Germany', phoneCode: '+49' },
+    { code: 'FR', name: 'France', phoneCode: '+33' },
+    { code: 'JP', name: 'Japan', phoneCode: '+81' },
+    { code: 'IN', name: 'India', phoneCode: '+91' },
+    { code: 'BR', name: 'Brazil', phoneCode: '+55' },
+    { code: 'CN', name: 'China', phoneCode: '+86' },
+    { code: 'ES', name: 'Spain', phoneCode: '+34' },
+    { code: 'IT', name: 'Italy', phoneCode: '+39' },
+    { code: 'NL', name: 'Netherlands', phoneCode: '+31' },
+    { code: 'RU', name: 'Russia', phoneCode: '+7' },
+    { code: 'SG', name: 'Singapore', phoneCode: '+65' },
+  ];
+
+  
   const handleVacanciesSubmit = async (vacancyData) => {
     try {
       await API.post('/vacancies/create', vacancyData, {
@@ -66,6 +87,7 @@ export const AddVacancyForm = ({ refetch }) => {
     try {
       await handleVacanciesSubmit({
         ...formData,
+        contact: `${selectedCountryCode}${phoneNo}`,
         bills: formData.bills === 'true',
         parking: formData.parking === 'true',
       });
@@ -146,14 +168,29 @@ export const AddVacancyForm = ({ refetch }) => {
             <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
               Contact Number <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              id="contact"
-              value={formData.contact}
-              onChange={(e) => handleChange('contact', e.target.value)}
-              className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
-              required
-            />
+            <div className="flex space-x-2">
+              {/* Country Code Dropdown */}
+              <select
+                name="phone"
+                value={selectedCountryCode}
+                onChange={(e) => setSelectedCountryCode(e.target.value)}
+                className="mt-1 p-1 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+              >
+                {countryCodes.map((item) => (
+                  <option key={item.code} value={`${item.phoneCode}`}>
+                    {item.code} ({item.phoneCode})
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                id="contact"
+                value={phoneNo}
+                onChange={(e) => setPhoneNo(e.target.value)}
+                className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
+                required
+              />
+            </div>
           </div>
 
           {/* Preferred Nationality */}
