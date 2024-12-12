@@ -96,6 +96,21 @@ const getVacancies = async (req, res) => {
   }
 };
 
+const getVacancy = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const vacancy = await Vacancy.findOne({
+      _id: id
+    });
+    if (!vacancy) {
+      return res.status(404).json({ message: "Vacancy not found."});
+    }
+    res.status(200).json({ message: "Vacancy updated successfully", vacancy });
+  } catch (error) {
+    res.status(400).json({ message: error.message || "Error occurred." });
+  }
+}
+
 const updateVacancy = async (req, res) => {
   try {
     const { id } = req.params;
@@ -139,4 +154,4 @@ const deleteVacancy = async (req, res) => {
 };
 
 
-module.exports = { createVacancy, getVacancies, updateVacancy, deleteVacancy };
+module.exports = { createVacancy, getVacancies, getVacancy, updateVacancy, deleteVacancy };

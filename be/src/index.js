@@ -24,7 +24,7 @@ mongoose
 
 // Routes
 app.use('/api/vacancies', vacancyRoutes);
-app.use('/api/users', userRoutes); // For user authentication and management
+app.use('/api/users', userRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 4000;

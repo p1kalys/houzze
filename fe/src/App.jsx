@@ -9,6 +9,7 @@ import API from "./api";
 import { SearchBar } from "./components/SearchBar";
 import { Filter } from "lucide-react";
 import { FilterModal } from "./components/FilterModal";
+import { EditVacancy } from "./components/EditVacancy";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -154,6 +155,7 @@ function App() {
         } />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/add-vacancy" element={<AddVacancyForm refetch={fetchVacancies} />} />
+        <Route path="/edit-vacancy/:id" element={<EditVacancy refetch={fetchVacancies} />} />
       </Routes>
     </div>
   );

@@ -1,35 +1,57 @@
 import { useEffect, useState } from 'react';
-import { User, Mail, Calendar } from 'lucide-react';
+import { User, Mail, Calendar, Trash, Pencil } from 'lucide-react';
 import API from '../api';
 import { VacancyCard } from './VacancyCard';
+import { useNavigate } from 'react-router-dom';
+import { ConfirmationModal } from './ConfirmationModal';
+
 
 export const ProfilePage = () => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [vacancies, setVacancies] = useState([]);
   const [expandVacancyId, setExpandVacancyId] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [vacancyToDelete, setVacancyToDelete] = useState(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await API.get('/users/account', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setProfile(response.data.user);
-        setVacancies(response.data.vacancies);
-        console.log(response.data.user);
-      } catch (err) {
-        setError('Failed to fetch profile data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProfile();
   }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const response = await API.get('/users/account', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setProfile(response.data.user);
+      setVacancies(response.data.vacancies);
+    } catch (err) {
+      setError('Failed to fetch profile data');
+      console.log('Error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteVacancy = async () => {
+    try {
+      const res = await API.delete(`/vacancies/${vacancyToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      console.log('delete', res);
+      fetchProfile();
+    } catch (err) {
+      console.error('Failed to delete vacancy:', err);
+    } finally {
+      setModalOpen(false);
+    }
+  };
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen">
@@ -76,14 +98,45 @@ export const ProfilePage = () => {
           ) : (
             <div className="mt-4 space-y-4">
               {vacancies.map((vacancy) => (
-                <VacancyCard
+                <div
                   key={vacancy._id}
-                  vacancy={vacancy}
-                  isExpanded={expandVacancyId === vacancy._id}
-                  onToggle={() => setExpandVacancyId(
-                    expandVacancyId === vacancy._id ? null : vacancy._id
-                  )}
-                />
+                  className="flex items-center w-full justify-between bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                  <div className="flex-1">
+                    <VacancyCard
+                      vacancy={vacancy}
+                      isExpanded={expandVacancyId === vacancy._id}
+                      onToggle={() =>
+                        setExpandVacancyId(
+                          expandVacancyId === vacancy._id ? null : vacancy._id
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-2 ml-4">
+                    <button
+                      className="p-2 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors duration-200 text-blue-700 shadow-sm" onClick={() => navigate(`/edit-vacancy/${vacancy._id}`)}
+                    >
+                      <Pencil className="h-5 w-5" />
+                    </button>
+                    <button
+                      className="p-2 bg-red-100 rounded-full hover:bg-red-200 transition-colors duration-200 text-red-700 shadow-sm" onClick={() => {
+                        setModalOpen(true);
+                        setVacancyToDelete(vacancy._id);
+                      }}
+                    >
+                      <Trash className="h-5 w-5" />
+                    </button>
+                  </div>
+                  {/* Confirmation Modal */}
+                  <ConfirmationModal
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    onConfirm={handleDeleteVacancy}
+                  />
+                </div>
+
               ))}
             </div>
           )}
