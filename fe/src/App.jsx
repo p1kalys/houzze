@@ -117,7 +117,7 @@ function App() {
         <Route path="/" element={
           <div className="max-w-9xl max-h-screen mx-auto px-4 py-8 pt-28">
             <div className="flex items-center gap-2 mb-8">
-              <SearchBar onSearch={handleFilterChange} />
+              <SearchBar filters={filters} onSearch={handleFilterChange} />
               <button
                 onClick={applyFilters}
                 className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"

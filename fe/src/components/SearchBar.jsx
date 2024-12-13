@@ -1,12 +1,13 @@
 import { Search } from 'lucide-react';
 
 
-export const SearchBar = ({ onSearch }) => {
+export const SearchBar = ({ filters, onSearch }) => {
   return (
     <div className="relative w-full max-w-3xl">
       <input
         type="text"
         name='search'
+        value={filters.search}
         placeholder="Search by name, city, postcode..."
         onChange={onSearch}
         className="w-full px-4 py-2 pl-10 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
