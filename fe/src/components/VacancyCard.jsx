@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, MapPin, DollarSign, Calendar } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Calendar, BadgeEuro } from 'lucide-react';
 
 export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
   const handleOpenMaps = () => {
@@ -55,8 +55,8 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
           <div className="mt-4 animate-fadeIn">
             <p className="text-gray-700 whitespace-pre-line">{vacancy.title} - {vacancy.description}</p>
             <p className="text-sm flex items-center mt-1">
-              <DollarSign className="h-4 w-4 mr-1 text-gray-500" />
-              Rent: ₹{vacancy.rent} / Deposit: ₹{vacancy.deposit}
+              <BadgeEuro className="h-4 w-4 mr-1 text-gray-500" />
+              Rent: £{vacancy.rent} / Deposit: £{vacancy.deposit}
             </p>
             <div className="grid grid-cols-2 gap-4 mt-4">
               {/* Bedrooms & Bathrooms */}
