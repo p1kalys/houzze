@@ -53,6 +53,7 @@ function App() {
       bathrooms: '',
     }))
     setFilterOn(false);
+    fetchVacancies();
   }
 
   const cancelFilter = () => {
@@ -125,9 +126,9 @@ function App() {
               </button>
               <button
                 onClick={() => setIsFilterModalOpen(true)}
-                className="flex items-center text-sm font-medium"
+                className="flex items-center text-sm font-medium p-2 hover:bg-gray-200 rounded-full"
               >
-                <Filter className="h-5 w-5 mr-2" />
+                <Filter className="h-5 w-5" />
               </button>
             </div>
             <FilterModal
