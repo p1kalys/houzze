@@ -75,8 +75,8 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
               <div className="text-sm text-gray-600">
                 <p>Room Type: {vacancy.roomType}</p>
                 <p>Preferred Tenant:  {vacancy.preferredType.length > 0
-                ? vacancy.preferredType.join(", ")
-                : "Any"}</p>
+                  ? vacancy.preferredType.join(", ")
+                  : "Any"}</p>
               </div>
               {/* Nationality & Bills */}
               <div className="text-sm text-gray-600">
@@ -95,14 +95,35 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
 
             {/* Contact Details */}
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-800">Contact:</h3>
-              <a
-                href={`tel:${vacancy.contact}`}
-                className="text-sm text-indigo-700 hover:text-indigo-500"
-              >
-                {vacancy.contact}
-              </a>
+              <h3 className="text-sm font-semibold text-gray-800">Contact Details:</h3>
+              <div className="flex flex-col space-y-1">
+                {/* Name */}
+                <div className="text-sm text-gray-700">
+                  <span className="font-medium text-gray-800">Name:</span> {vacancy.createdBy.name || 'N/A'}
+                </div>
+                {/* Email */}
+                <div className="text-sm text-gray-700">
+                  <span className="font-medium text-gray-800">Email:</span>{' '}
+                  <a
+                    href={`mailto:${vacancy.email}`}
+                    className="text-indigo-700 hover:text-indigo-500"
+                  >
+                    {vacancy.email || 'N/A'}
+                  </a>
+                </div>
+                {/* Contact */}
+                <div className="text-sm text-gray-700">
+                  <span className="font-medium text-gray-800">Phone:</span>{' '}
+                  <a
+                    href={`tel:${vacancy.contact}`}
+                    className="text-indigo-700 hover:text-indigo-500"
+                  >
+                    {vacancy.contact || 'N/A'}
+                  </a>
+                </div>
+              </div>
             </div>
+
           </div>
         )}
       </div>
