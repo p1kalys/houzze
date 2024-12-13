@@ -41,6 +41,7 @@ export const FilterModal = ({ isOpen, onClose, filters, setFilters, handleFilter
               <input
                 type="number"
                 name="rentMin"
+                min={'0'}
                 value={filters.rentMin}
                 onChange={handleFilterChange}
                 placeholder="Min"
@@ -49,6 +50,7 @@ export const FilterModal = ({ isOpen, onClose, filters, setFilters, handleFilter
               <input
                 type="number"
                 name="rentMax"
+                min={'0'}
                 value={filters.rentMax}
                 onChange={handleFilterChange}
                 placeholder="Max"

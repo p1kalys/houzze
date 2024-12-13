@@ -7,7 +7,7 @@ import { AddVacancyForm } from "./components/AddVacancy";
 import { ProfilePage } from "./components/Profile";
 import API from "./api";
 import { SearchBar } from "./components/SearchBar";
-import { Filter } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import { FilterModal } from "./components/FilterModal";
 import { EditVacancy } from "./components/EditVacancy";
 
@@ -18,6 +18,7 @@ function App() {
   const [allVacancies, setAllVacancies] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [filterOn, setFilterOn] = useState(false);
   const [filters, setFilters] = useState({
     search: '',
     rentMin: '',
@@ -51,16 +52,19 @@ function App() {
       roomType: '',
       bathrooms: '',
     }))
+    setFilterOn(false);
   }
 
   const cancelFilter = () => {
     setIsFilterModalOpen(false);
     resetFilters();
+    setFilterOn(false);
   }
 
   const applyFilters = () => {
     fetchVacancies(filters);
     setIsFilterModalOpen(false);
+    setFilterOn(true);
   };
 
   useEffect(() => {
@@ -107,7 +111,7 @@ function App() {
       />
 
       <Routes>
-        <Route path="/login" element={<AuthModal type="login" setIsLoggedIn={setIsLoggedIn}  />} />
+        <Route path="/login" element={<AuthModal type="login" setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/signup" element={<AuthModal type="signup" setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/" element={
           <div className="max-w-9xl max-h-screen mx-auto px-4 py-8 pt-28">
@@ -134,6 +138,16 @@ function App() {
               handleFilterChange={handleFilterChange}
               applyFilter={applyFilters}
             />
+            {filterOn && <div className="flex items-center mb-4">
+              <button
+                onClick={resetFilters}
+                className="flex items-center space-x-2 px-2 py-1 text-sm font-medium text-indigo-500 border border-indigo-500 rounded-full hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <X className="h-4 w-4 text-indigo-500" />
+                <span className="text-xs text-gray-700">Remove Filters</span>
+              </button>
+            </div>}
+
             <div className="grid gap-6">
               {(loading) ?
                 <div className="flex justify-center items-center h-screen">

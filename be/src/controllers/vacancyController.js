@@ -53,7 +53,7 @@ const getVacancies = async (req, res) => {
     }
 
     // Full-text search in multiple fields
-    if (filters.search) {
+    if (filters.search !== '') {
       const searchRegex = new RegExp(filters.search, "i"); // Case-insensitive partial match
       query.$or = [
         { address: searchRegex },
