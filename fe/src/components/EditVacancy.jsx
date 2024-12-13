@@ -14,6 +14,7 @@ export const EditVacancy = ({ refetch }) => {
         bedrooms: 0,
         bathrooms: 0,
         contact: '',
+        email: '',
         benefits: '',
         bills: 'false',
         nationality: '',
@@ -58,7 +59,7 @@ export const EditVacancy = ({ refetch }) => {
                 });
                 console.log('Res:', res.data);
                 setFormData(res.data.vacancy);
-                setSelectedCountryCode(res.data.vacancy.contact.substr(0,3));
+                setSelectedCountryCode(res.data.vacancy.contact.substr(0, 3));
                 setPhoneNo(res.data.vacancy.contact.substr(3));
                 if (res.data.vacancy.available) {
                     const availableDate = new Date(res.data.vacancy.available);
@@ -78,9 +79,9 @@ export const EditVacancy = ({ refetch }) => {
 
     if (loading) {
         return <div className="flex justify-center items-center h-screen">
-          <div className="loader border-t-indigo-500 border-4 w-12 h-12 rounded-full animate-spin"></div>
+            <div className="loader border-t-indigo-500 border-4 w-12 h-12 rounded-full animate-spin"></div>
         </div>;
-      }
+    }
 
 
     const handleVacancySubmit = async (vacancyData) => {
@@ -102,6 +103,7 @@ export const EditVacancy = ({ refetch }) => {
                 bedrooms: 0,
                 bathrooms: 0,
                 contact: '',
+                email: '',
                 benefits: '',
                 bills: 'false',
                 nationality: '',
@@ -223,6 +225,21 @@ export const EditVacancy = ({ refetch }) => {
                                 required
                             />
                         </div>
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                            Email <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={formData.email}
+                            onChange={(e) => handleChange('email', e.target.value)}
+                            className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
+                            required
+                        />
                     </div>
 
                     {/* Preferred Nationality */}
@@ -391,7 +408,7 @@ export const EditVacancy = ({ refetch }) => {
                             Preferred Tenant Type
                         </label>
                         <div className="mt-2 space-y-2">
-                            {["Student", "Boy", "Girl", "Professional", "Couple", "Any"].map((type) => (
+                            {["Student", "Male", "Female", "Professional", "Couple", "Any"].map((type) => (
                                 <div key={type} className="flex items-center">
                                     <input
                                         type="checkbox"

@@ -14,14 +14,14 @@ const createVacancyValidator = z.object({
   contact: z.string().regex(/^\+?[0-9]\d{1,14}$/,"Contact must be a valid international phone number (E.164 format)"),
   benefits: z.string().optional(),
   bills: z.boolean(),
+  email: z.string().email("Invalid email format").optional(),
   nationality: z.string().optional(),
-  roomType: z.enum(
-    ["1BHK", "2BHK", "3BHK", "4BHK", "5BHK"],
+  roomType: z.enum(["1BHK", "2BHK", "3BHK", "4BHK", "5BHK"],
     "Invalid room type"
   ),
   preferredType: z
     .array(
-      z.enum(["Student", "Boy", "Girl", "Professional", "Couple", "Any"], "Invalid preferred type")
+      z.enum(["Student", "Male", "Female", "Professional", "Couple", "Any"], "Invalid preferred type")
     )
     .optional(),
   parking: z.boolean().optional(),

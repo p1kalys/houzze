@@ -16,6 +16,7 @@ export const AddVacancyForm = ({ refetch }) => {
     benefits: '',
     bills: 'false',
     nationality: '',
+    email: '',
     roomType: '',
     preferredType: [],
     parking: 'false',
@@ -45,7 +46,7 @@ export const AddVacancyForm = ({ refetch }) => {
     { code: 'SG', name: 'Singapore', phoneCode: '+65' },
   ];
 
-  
+
   const handleVacanciesSubmit = async (vacancyData) => {
     try {
       await API.post('/vacancies/create', vacancyData, {
@@ -65,6 +66,7 @@ export const AddVacancyForm = ({ refetch }) => {
         bedrooms: 0,
         bathrooms: 0,
         contact: '',
+        email: '',
         benefits: '',
         bills: 'false',
         nationality: '',
@@ -121,7 +123,7 @@ export const AddVacancyForm = ({ refetch }) => {
 
   useEffect(() => {
     console.log("ff", formData);
-  },[formData]);
+  }, [formData]);
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -191,6 +193,20 @@ export const AddVacancyForm = ({ refetch }) => {
                 required
               />
             </div>
+          </div>
+
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={(e) => handleChange('email', e.target.value)}
+              className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
+            />
           </div>
 
           {/* Preferred Nationality */}
@@ -359,7 +375,7 @@ export const AddVacancyForm = ({ refetch }) => {
               Preferred Tenant Type
             </label>
             <div className="mt-2 space-y-2">
-              {["Student", "Boy", "Girl", "Professional", "Couple", "Any"].map((type) => (
+              {["Student", "Male", "Female", "Professional", "Couple", "Any"].map((type) => (
                 <div key={type} className="flex items-center">
                   <input
                     type="checkbox"
