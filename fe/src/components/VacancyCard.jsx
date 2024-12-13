@@ -95,14 +95,14 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
 
             {/* Contact Details */}
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-800">Contact Details:</h3>
+              <h3 className="text-sm font-semibold pb-2 text-gray-800">Contact Details:</h3>
               <div className="flex flex-col space-y-1">
                 {/* Name */}
-                <div className="text-sm text-gray-700">
-                  <span className="font-medium text-gray-800">Name:</span> {vacancy.createdBy.name || 'N/A'}
-                </div>
+                {vacancy.name && <div className="text-sm text-gray-700">
+                  <span className="font-medium text-gray-800">Name:</span> {vacancy.name || 'N/A'}
+                </div>}
                 {/* Email */}
-                <div className="text-sm text-gray-700">
+                {vacancy.email && <div className="text-sm text-gray-700">
                   <span className="font-medium text-gray-800">Email:</span>{' '}
                   <a
                     href={`mailto:${vacancy.email}`}
@@ -110,7 +110,7 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
                   >
                     {vacancy.email || 'N/A'}
                   </a>
-                </div>
+                </div>}
                 {/* Contact */}
                 <div className="text-sm text-gray-700">
                   <span className="font-medium text-gray-800">Phone:</span>{' '}

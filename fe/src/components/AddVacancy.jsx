@@ -17,6 +17,7 @@ export const AddVacancyForm = ({ refetch }) => {
     bills: 'false',
     nationality: '',
     email: '',
+    name: '',
     roomType: '',
     preferredType: [],
     parking: 'false',
@@ -67,6 +68,7 @@ export const AddVacancyForm = ({ refetch }) => {
         bathrooms: 0,
         contact: '',
         email: '',
+        name: '',
         benefits: '',
         bills: 'false',
         nationality: '',
@@ -163,49 +165,6 @@ export const AddVacancyForm = ({ refetch }) => {
               className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
               rows={4}
               required
-            />
-          </div>
-          {/* Contact Number */}
-          <div>
-            <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
-              Contact Number <span className="text-red-500">*</span>
-            </label>
-            <div className="flex space-x-2">
-              {/* Country Code Dropdown */}
-              <select
-                name="phone"
-                value={selectedCountryCode}
-                onChange={(e) => setSelectedCountryCode(e.target.value)}
-                className="mt-1 p-1 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
-              >
-                {countryCodes.map((item) => (
-                  <option key={item.code} value={`${item.phoneCode}`}>
-                    {item.code} ({item.phoneCode})
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                id="contact"
-                value={phoneNo}
-                onChange={(e) => setPhoneNo(e.target.value)}
-                className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={(e) => handleChange('email', e.target.value)}
-              className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
             />
           </div>
 
@@ -426,6 +385,65 @@ export const AddVacancyForm = ({ refetch }) => {
               className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
               required
             />
+          </div>
+          <div className="mt-4 pt-4 space-y-6 border-t border-gray-200">
+            {/* Name */}
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={formData.title}
+                onChange={(e) => handleChange('name', e.target.value)}
+                className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
+                required
+              />
+            </div>
+            {/* Contact Number */}
+            <div>
+              <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
+                Contact Number <span className="text-red-500">*</span>
+              </label>
+              <div className="flex space-x-2">
+                {/* Country Code Dropdown */}
+                <select
+                  name="phone"
+                  value={selectedCountryCode}
+                  onChange={(e) => setSelectedCountryCode(e.target.value)}
+                  className="mt-1 p-1 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                >
+                  {countryCodes.map((item) => (
+                    <option key={item.code} value={`${item.phoneCode}`}>
+                      {item.code} ({item.phoneCode})
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  id="contact"
+                  value={phoneNo}
+                  onChange={(e) => setPhoneNo(e.target.value)}
+                  className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={formData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
+              />
+            </div>
           </div>
 
           <div className="flex justify-end">

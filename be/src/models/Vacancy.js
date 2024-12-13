@@ -11,6 +11,7 @@ const VacancySchema = new mongoose.Schema({
   bathrooms: { type: Number, required: true },
   contact: { type: String, required: true },
   email: { type: String },
+  name: { type: String, required: true},
   benefits: { type: String },
   bills: { type: Boolean, default: false },
   nationality: { type: String },

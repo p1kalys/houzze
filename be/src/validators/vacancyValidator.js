@@ -15,6 +15,7 @@ const createVacancyValidator = z.object({
   benefits: z.string().optional(),
   bills: z.boolean(),
   email: z.string().email("Invalid email format").optional(),
+  name: z.string(),
   nationality: z.string().optional(),
   roomType: z.enum(["1BHK", "2BHK", "3BHK", "4BHK", "5BHK"],
     "Invalid room type"
