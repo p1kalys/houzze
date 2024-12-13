@@ -1,12 +1,31 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-export const FilterModal = ({ isOpen, onClose, filters, handleFilterChange, applyFilter }) => {
+export const FilterModal = ({ isOpen, onClose, filters, setFilters, handleFilterChange, applyFilter }) => {
   if (!isOpen) return null;
+
+  const handleCheckboxChange = (field, value) => {
+    setFilters((prevState) => {
+      const updatedField = [...prevState[field]];
+
+      // Toggle value in array
+      if (updatedField.includes(value)) {
+        return {
+          ...prevState,
+          [field]: updatedField.filter((item) => item !== value),
+        };
+      } else {
+        return {
+          ...prevState,
+          [field]: [...updatedField, value],
+        };
+      }
+    });
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+      <div className="bg-white rounded-lg p-6 w-4/5 max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Filters</h2>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full">
@@ -14,7 +33,7 @@ export const FilterModal = ({ isOpen, onClose, filters, handleFilterChange, appl
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-60 overflow-y-auto">
           {/* Rent Range */}
           <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium text-gray-600">Rent Range</label>
@@ -117,6 +136,34 @@ export const FilterModal = ({ isOpen, onClose, filters, handleFilterChange, appl
                 </option>
               ))}
             </select>
+          </div>
+
+
+          {/* Preferred Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Preferred Tenant Type
+            </label>
+            <div className="mt-2 space-y-2">
+              {["Student", "Male", "Female", "Professional", "Couple", "Any"].map((type) => (
+                <div key={type} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`preferredType-${type}`}
+                    value={type}
+                    checked={filters?.preferredType?.includes(type)}
+                    onChange={() => handleCheckboxChange("preferredType", type)}
+                    className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  />
+                  <label
+                    htmlFor={`preferredType-${type}`}
+                    className="ml-2 text-sm text-gray-700"
+                  >
+                    {type}
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

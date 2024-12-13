@@ -26,6 +26,7 @@ function App() {
     parking: '',
     bedrooms: '',
     roomType: '',
+    preferredType: [],
     bathrooms: '',
   });
 
@@ -46,6 +47,7 @@ function App() {
       bills: '',
       parking: '',
       bedrooms: '',
+      preferredType: [],
       roomType: '',
       bathrooms: '',
     }))
@@ -128,6 +130,7 @@ function App() {
               isOpen={isFilterModalOpen}
               onClose={cancelFilter}
               filters={filters}
+              setFilters={setFilters}
               handleFilterChange={handleFilterChange}
               applyFilter={applyFilters}
             />
