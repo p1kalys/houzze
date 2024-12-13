@@ -32,10 +32,14 @@ const getVacancies = async (req, res) => {
     if (filters.nationality) query.nationality = filters.nationality;
 
     // Rent filters (min/max)
-    if (filters.minRent || filters.maxRent) {
+    if (filters.rentMin || filters.rentMax) {
       query.rent = {};
-      if (filters.minRent) query.rent.$gte = Number(filters.minRent);
-      if (filters.maxRent) query.rent.$lte = Number(filters.maxRent);
+      if (filters.rentMin) {
+        query.rent.$gte = Number(filters.rentMin); // Apply rentMin filter if provided
+      }
+      if (filters.rentMax) {
+        query.rent.$lte = Number(filters.rentMax); // Apply rentMax filter if provided
+      }
     }
 
     // Bedrooms and bathrooms filters
@@ -53,7 +57,7 @@ const getVacancies = async (req, res) => {
     }
 
     // Full-text search in multiple fields
-    if (filters.search !== '') {
+    if (filters.search !== "") {
       const searchRegex = new RegExp(filters.search, "i"); // Case-insensitive partial match
       query.$or = [
         { address: searchRegex },
@@ -100,16 +104,16 @@ const getVacancy = async (req, res) => {
   try {
     const { id } = req.params;
     const vacancy = await Vacancy.findOne({
-      _id: id
+      _id: id,
     });
     if (!vacancy) {
-      return res.status(404).json({ message: "Vacancy not found."});
+      return res.status(404).json({ message: "Vacancy not found." });
     }
     res.status(200).json({ message: "Vacancy updated successfully", vacancy });
   } catch (error) {
     res.status(400).json({ message: error.message || "Error occurred." });
   }
-}
+};
 
 const updateVacancy = async (req, res) => {
   try {
@@ -124,7 +128,9 @@ const updateVacancy = async (req, res) => {
     );
 
     if (!vacancy) {
-      return res.status(404).json({ message: "Vacancy not found or unauthorized." });
+      return res
+        .status(404)
+        .json({ message: "Vacancy not found or unauthorized." });
     }
 
     res.status(200).json({ message: "Vacancy updated successfully", vacancy });
@@ -144,14 +150,26 @@ const deleteVacancy = async (req, res) => {
     });
 
     if (!vacancy) {
-      return res.status(404).json({ message: "Vacancy not found or unauthorized." });
+      return res
+        .status(404)
+        .json({ message: "Vacancy not found or unauthorized." });
     }
 
     res.status(200).json({ message: "Vacancy deleted successfully" });
   } catch (error) {
-    res.status(400).json({ message: error.message || "An error occurred while deleting the vacancy." });
+    res
+      .status(400)
+      .json({
+        message:
+          error.message || "An error occurred while deleting the vacancy.",
+      });
   }
 };
 
-
-module.exports = { createVacancy, getVacancies, getVacancy, updateVacancy, deleteVacancy };
+module.exports = {
+  createVacancy,
+  getVacancies,
+  getVacancy,
+  updateVacancy,
+  deleteVacancy,
+};
