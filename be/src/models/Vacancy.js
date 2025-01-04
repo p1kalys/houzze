@@ -10,7 +10,7 @@ const VacancySchema = new mongoose.Schema({
   bedrooms: { type: Number, required: true },
   bathrooms: { type: Number, required: true },
   contact: { type: String, required: true },
-  email: { type: String },
+  email: { type: String, required: false },
   name: { type: String, required: true},
   benefits: { type: String },
   bills: { type: Boolean, default: false },

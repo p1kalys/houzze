@@ -428,7 +428,7 @@ export const EditVacancy = ({ refetch }) => {
                             <input
                                 type="text"
                                 id="name"
-                                value={formData.title}
+                                value={formData.name}
                                 onChange={(e) => handleChange('name', e.target.value)}
                                 className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
                                 required
@@ -474,6 +474,7 @@ export const EditVacancy = ({ refetch }) => {
                                 id="email"
                                 value={formData.email}
                                 onChange={(e) => handleChange('email', e.target.value)}
+                                required
                                 className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
                             />
                         </div>
