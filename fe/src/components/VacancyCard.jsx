@@ -33,6 +33,11 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
     );
   };
 
+  const handleImageClick = (index) => {
+    setCurrentImageIndex(index);
+    setShowImagePopup(true);
+  };
+
   return (
     <>
       <div
@@ -43,7 +48,7 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
         <div className="flex flex-row">
           {/* Image Section - Left Side (Only show when not expanded) */}
           {!isExpanded && vacancy.images && vacancy.images.length > 0 && (
-            <div className="relative w-1/3 h-24 md:h-32 cursor-pointer" onClick={() => setShowImagePopup(true)}>
+            <div className="relative w-1/3 h-32 md:h-48 cursor-pointer" onClick={() => setShowImagePopup(true)}>
               <img
                 src={vacancy.images[currentImageIndex]}
                 alt={`Property ${currentImageIndex + 1}`}
@@ -130,8 +135,8 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
                         key={index}
                         src={image}
                         alt={`Property view ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={() => setCurrentImageIndex(index)}
+                        className="w-full h-64 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => handleImageClick(index)}
                       />
                     ))}
                   </div>

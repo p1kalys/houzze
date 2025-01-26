@@ -2,7 +2,7 @@ import { useState } from 'react';
 import API from '../api';
 import { useNavigate } from 'react-router-dom';
 
-// Add this helper function for image compression
+// Update the compression function for better size reduction
 const compressImage = (file) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -17,8 +17,8 @@ const compressImage = (file) => {
         let width = img.width;
         let height = img.height;
         
-        // Calculate new dimensions while maintaining aspect ratio
-        const maxDimension = 1024; // Max width/height
+        // More aggressive resizing for large images
+        const maxDimension = 800; // Reduced from 1024
         if (width > height && width > maxDimension) {
           height = Math.round((height * maxDimension) / width);
           width = maxDimension;
@@ -31,16 +31,18 @@ const compressImage = (file) => {
         canvas.height = height;
         
         const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF'; // Add white background to reduce size of transparent PNGs
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, width, height);
         
-        // Compress image
+        // More aggressive compression
         canvas.toBlob((blob) => {
           const compressedReader = new FileReader();
           compressedReader.readAsDataURL(blob);
           compressedReader.onloadend = () => {
             resolve(compressedReader.result);
           };
-        }, 'image/jpeg', 0.7);
+        }, 'image/jpeg', 0.5); // Reduced quality from 0.7 to 0.5
       };
     };
   });
@@ -183,30 +185,38 @@ export const AddVacancyForm = ({ refetch }) => {
     });
   };
 
+  // Update handleImageChange to be more strict with size limits
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
-    const maxFileSize = 500 * 1024; // 500KB in bytes
-    const maxFiles = 5; // Maximum number of files
+    const maxFileSize = 300 * 1024; // Reduced to 300KB
+    const maxFiles = 5;
     
-    // Clear previous previews if any
+    // Clear previous previews and errors
     setImagePreview([]);
     setFormData(prev => ({ ...prev, images: [] }));
+    setError('');
     
-    // Check number of files
     if (files.length > maxFiles) {
-      setError(`Maximum ${maxFiles} images allowed`);
+      setError(`Maximum ${maxFiles} images allowed. Please select fewer images.`);
+      e.target.value = '';
       return;
     }
-    
+
     try {
       for (const file of files) {
-        // Validate file type
         if (!file.type.startsWith('image/')) {
           setError('Please upload only image files');
-          continue;
+          e.target.value = '';
+          return;
         }
         
-        // Compress and process image
+        // Initial size check
+        if (file.size > 5 * 1024 * 1024) { // 5MB
+          setError(`Image ${file.name} is too large. Please use an image under 5MB.`);
+          e.target.value = '';
+          return;
+        }
+
         const compressedImage = await compressImage(file);
         
         // Check compressed size
@@ -214,7 +224,7 @@ export const AddVacancyForm = ({ refetch }) => {
           (compressedImage.endsWith('==') ? 2 : compressedImage.endsWith('=') ? 1 : 0);
         
         if (base64Size > maxFileSize) {
-          setError(`Image ${file.name} is too large. Maximum size is 500KB`);
+          setError(`Image ${file.name} is still too large after compression. Please use a smaller image.`);
           continue;
         }
         
@@ -225,8 +235,9 @@ export const AddVacancyForm = ({ refetch }) => {
         }));
       }
     } catch (error) {
-      setError('Error processing images. Please try again.');
+      setError('Error processing images. Please try again with smaller images.');
       console.error('Error processing images:', error);
+      e.target.value = '';
     }
   };
 
