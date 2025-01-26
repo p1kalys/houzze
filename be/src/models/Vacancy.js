@@ -21,6 +21,9 @@ const VacancySchema = new mongoose.Schema({
   available: { type: Date, required: true, default: Date.now() },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now },
+  images: [{ type: String }],
+  smoker: { type: Boolean, default: false },
+  pets: { type: Boolean, default: false },
 });
 
 

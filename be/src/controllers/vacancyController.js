@@ -51,27 +51,89 @@ const validateVacancyData = (data) => {
   if (data.available && isNaN(new Date(data.available).getTime())) {
     errors.push("Available date must be a valid date.");
   }
+  if (data.images) {
+    if (!Array.isArray(data.images)) {
+      errors.push("Images must be an array.");
+    } else {
+      // Validate each image URL in the array
+      const invalidImages = data.images.filter(url => {
+        if (typeof url !== 'string') return true;
+        try {
+          new URL(url);
+          return false; // URL is valid
+        } catch {
+          return true; // URL is invalid
+        }
+      });
+      
+      if (invalidImages.length > 0) {
+        errors.push("All images must be valid URLs.");
+      }
+    }
+  }
 
   return errors;
 };
 
 const createVacancy = async (req, res) => {
   try {
+    // Check payload size
+    const payloadSize = JSON.stringify(req.body).length;
+    const maxPayloadSize = 10 * 1024 * 1024; // 10MB limit
+    
+    if (payloadSize > maxPayloadSize) {
+      return res.status(413).json({
+        status: 'error',
+        message: "Payload too large. Please reduce the size of your images or submit fewer images."
+      });
+    }
+
     const errors = validateVacancyData(req.body);
     if (errors.length > 0) {
-      return res.status(400).json({ message: errors.join(", ") || "Validation error" });
+      return res.status(422).json({ 
+        status: 'error',
+        message: errors.join(", "),
+        errors: errors 
+      });
     }
 
     const vacancy = new Vacancy({ ...req.body, createdBy: req.user._id });
     await vacancy.save();
-    res.status(201).json({ message: "Vacancy created successfully", vacancy });
+    res.status(201).json({ 
+      status: 'success',
+      message: "Vacancy created successfully", 
+      data: vacancy 
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message || "An error occurred." });
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({
+        status: 'error',
+        message: "Validation failed",
+        errors: Object.values(error.errors).map(err => err.message)
+      });
+    }
+    
+    res.status(500).json({ 
+      status: 'error',
+      message: "Internal server error",
+      error: error.message 
+    });
   }
 };
 
 const updateVacancy = async (req, res) => {
   try {
+    // Check payload size
+    const payloadSize = JSON.stringify(req.body).length;
+    const maxPayloadSize = 10 * 1024 * 1024; // 10MB limit
+    
+    if (payloadSize > maxPayloadSize) {
+      return res.status(413).json({
+        status: 'error',
+        message: "Payload too large. Please reduce the size of your images or submit fewer images."
+      });
+    }
+
     const { id } = req.params;
     const data = req.body;
 

@@ -1,6 +1,50 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import API from '../api';
 import { useNavigate } from 'react-router-dom';
+
+// Add this helper function for image compression
+const compressImage = (file) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        
+        // Calculate new dimensions while maintaining aspect ratio
+        const maxDimension = 1024; // Max width/height
+        if (width > height && width > maxDimension) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else if (height > maxDimension) {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Compress image
+        canvas.toBlob((blob) => {
+          const compressedReader = new FileReader();
+          compressedReader.readAsDataURL(blob);
+          compressedReader.onloadend = () => {
+            resolve(compressedReader.result);
+          };
+        }, 'image/jpeg', 0.7);
+      };
+    };
+  });
+};
 
 export const AddVacancyForm = ({ refetch }) => {
   const [formData, setFormData] = useState({
@@ -22,12 +66,16 @@ export const AddVacancyForm = ({ refetch }) => {
     preferredType: [],
     parking: 'false',
     available: '',
+    images: [],
+    smoker: 'false',
+    pets: 'false',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [selectedCountryCode, setSelectedCountryCode] = useState('+44');
   const [phoneNo, setPhoneNo] = useState('');
+  const [imagePreview, setImagePreview] = useState([]);
 
   const countryCodes = [
     { code: 'GB', name: 'United Kingdom', phoneCode: '+44' },
@@ -76,10 +124,19 @@ export const AddVacancyForm = ({ refetch }) => {
         preferredType: [],
         parking: 'false',
         available: '',
+        images: [],
+        smoker: 'false',
+        pets: 'false',
       });
       setError('');
     } catch (error) {
-      setError("Error occurred. Please fill all the fields properly.");
+      if (error.response && error.response.status === 413) {
+        setError("Images are too large. Please reduce the size or number of images.");
+        setImagePreview([]);
+        setFormData(prev => ({ ...prev, images: [] }));
+      } else {
+        setError("Error occurred. Please fill all the fields properly. Ensure Image sizes are less than 2 MB");
+      }
       console.error("Error submitting vacancy:", error);
     }
   };
@@ -94,6 +151,9 @@ export const AddVacancyForm = ({ refetch }) => {
         contact: `${selectedCountryCode}${phoneNo}`,
         bills: formData.bills === 'true',
         parking: formData.parking === 'true',
+        smoker: formData.smoker === 'true',
+        pets: formData.pets === 'true',
+        images: formData.images,
       });
     } finally {
       setIsSubmitting(false);
@@ -122,6 +182,133 @@ export const AddVacancyForm = ({ refetch }) => {
       }
     });
   };
+
+  const handleImageChange = async (e) => {
+    const files = Array.from(e.target.files);
+    const maxFileSize = 500 * 1024; // 500KB in bytes
+    const maxFiles = 5; // Maximum number of files
+    
+    // Clear previous previews if any
+    setImagePreview([]);
+    setFormData(prev => ({ ...prev, images: [] }));
+    
+    // Check number of files
+    if (files.length > maxFiles) {
+      setError(`Maximum ${maxFiles} images allowed`);
+      return;
+    }
+    
+    try {
+      for (const file of files) {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          setError('Please upload only image files');
+          continue;
+        }
+        
+        // Compress and process image
+        const compressedImage = await compressImage(file);
+        
+        // Check compressed size
+        const base64Size = (compressedImage.length * 3) / 4 - 
+          (compressedImage.endsWith('==') ? 2 : compressedImage.endsWith('=') ? 1 : 0);
+        
+        if (base64Size > maxFileSize) {
+          setError(`Image ${file.name} is too large. Maximum size is 500KB`);
+          continue;
+        }
+        
+        setImagePreview(prev => [...prev, compressedImage]);
+        setFormData(prev => ({
+          ...prev,
+          images: [...prev.images, compressedImage]
+        }));
+      }
+    } catch (error) {
+      setError('Error processing images. Please try again.');
+      console.error('Error processing images:', error);
+    }
+  };
+
+  const removeImage = (index) => {
+    setImagePreview(prev => prev.filter((_, i) => i !== index));
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const imageUploadSection = (
+    <div className="space-y-4">
+      <label className="block text-sm font-medium text-gray-700">
+        Smoking Allowed
+      </label>
+      <select
+        id="smoker"
+        value={formData.smoker}
+        onChange={(e) => handleChange('smoker', e.target.value)}
+        className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
+        required
+      >
+        <option value="false">No</option>
+        <option value="true">Yes</option>
+      </select>
+
+      <label className="block text-sm font-medium text-gray-700">
+        Pets Allowed
+      </label>
+      <select
+        id="pets"
+        value={formData.pets}
+        onChange={(e) => handleChange('pets', e.target.value)}
+        className="mt-1 block w-full rounded-md border-2 border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 px-4 py-2 text-sm md:text-base"
+        required
+      >
+        <option value="false">No</option>
+        <option value="true">Yes</option>
+      </select>
+
+      <label className="block text-sm font-medium text-gray-700">
+        Upload Images
+      </label>
+      <div className="mt-1 flex items-center">
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageChange}
+          className="block w-full text-sm text-gray-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-md file:border-0
+            file:text-sm file:font-semibold
+            file:bg-blue-50 file:text-blue-700
+            hover:file:bg-blue-100"
+        />
+      </div>
+      
+      {/* Image Preview Section */}
+      {imagePreview.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          {imagePreview.map((image, index) => (
+            <div key={index} className="relative">
+              <img
+                src={image}
+                alt={`Preview ${index + 1}`}
+                className="h-24 w-24 object-cover rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => removeImage(index)}
+                className="absolute -top-2 -left-1 bg-red-500 text-white rounded-full pb-1 w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+              >
+                x
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -382,6 +569,8 @@ export const AddVacancyForm = ({ refetch }) => {
               required
             />
           </div>
+          {/* Add the image upload section before the submit button */}
+          {imageUploadSection}
           <div className="mt-4 pt-4 space-y-6 border-t border-gray-200">
             {/* Name */}
             <div>
@@ -441,6 +630,7 @@ export const AddVacancyForm = ({ refetch }) => {
               />
             </div>
           </div>
+
 
           <div className="flex justify-end">
             <button
