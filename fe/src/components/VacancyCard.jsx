@@ -38,20 +38,41 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
     setShowImagePopup(true);
   };
 
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const today = new Date();
+    
+    // If available immediately or date is in the past
+    if (d <= today) {
+      return "Available Now";
+    }
+    
+    // For all future dates, show the specific date
+    return `Available ${d.toLocaleDateString('en-GB', { 
+      day: 'numeric',
+      month: 'short'
+    })}`;
+  };
+
   return (
     <>
       <div className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ${
         isExpanded ? 'ring-2 ring-indigo-500' : 'hover:shadow-lg'
       }`}>
-        <div className="flex flex-row">
+        <div className="flex flex-col sm:flex-row">
           {/* Image Section - Left Side (Only show when not expanded) */}
           {!isExpanded && vacancy.images && vacancy.images.length > 0 && (
-            <div className="relative w-1/3 h-24 md:h-32 cursor-pointer" onClick={() => setShowImagePopup(true)}>
+            <div className="relative w-full sm:w-1/3 h-48 sm:h-32 cursor-pointer" onClick={() => setShowImagePopup(true)}>
               <img
                 src={vacancy.images[currentImageIndex]}
                 alt={`Property ${currentImageIndex + 1}`}
                 className="w-full h-full object-cover"
               />
+              {/* Price Badge */}
+              <div className="absolute top-2 right-2 bg-green-600 text-white px-3 py-1.5 rounded-md shadow-sm">
+                <span className="text-base font-semibold">£{vacancy.rent}</span>
+                <span className="text-sm">/month</span>
+              </div>
               {vacancy.images.length > 1 && (
                 <>
                   <button
@@ -59,24 +80,24 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
                       e.stopPropagation();
                       prevImage(e);
                     }}
-                    className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 md:p-2 rounded-full text-white hover:bg-black/70"
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70"
                   >
-                    <ChevronLeft className="h-4 w-4 md:h-6 md:w-6" />
+                    <ChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       nextImage(e);
                     }}
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 md:p-2 rounded-full text-white hover:bg-black/70"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70"
                   >
-                    <ChevronRight className="h-4 w-4 md:h-6 md:w-6" />
+                    <ChevronRight className="h-5 w-5" />
                   </button>
-                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1.5">
                     {vacancy.images.map((_, index) => (
                       <div
                         key={index}
-                        className={`h-1.5 w-1.5 md:h-2 md:w-2 rounded-full ${
+                        className={`h-2 w-2 rounded-full ${
                           index === currentImageIndex ? 'bg-white' : 'bg-white/50'
                         }`}
                       />
@@ -84,45 +105,42 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
                   </div>
                 </>
               )}
-              {/* Price Badge */}
-              <div className="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded-md shadow-sm">
-                <span className="text-sm md:text-base font-semibold">£{vacancy.rent}</span>
-                <span className="text-xs md:text-sm">/month</span>
-              </div>
             </div>
           )}
 
-          {/* Content Section - Right Side */}
-          <div className="p-2 md:p-4 flex-1">
+          {/* Content Section */}
+          <div className="flex-1 p-3 sm:p-4">
             {/* Header with Title and Expand Button */}
             <div className="flex justify-between items-start cursor-pointer" onClick={onToggle}>
               <div className="flex-1">
-                {/* Price for mobile when no image */}
                 {(!vacancy.images || vacancy.images.length === 0) && (
                   <div className="mb-2">
-                    <span className="bg-green-600 text-white px-2 py-1 rounded-md text-sm md:text-base font-semibold">
+                    <span className="bg-green-600 text-white px-3 py-1.5 rounded-md text-base font-semibold">
                       £{vacancy.rent}/month
                     </span>
                   </div>
                 )}
-                <h2 className="text-base md:text-xl font-semibold text-gray-800">
+                <h2 className="text-base font-semibold text-gray-800 mb-2">
                   {truncateText(vacancy.description, 100)}
                 </h2>
                 {/* Key Features Row */}
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <span className="inline-flex items-center px-2 py-1 bg-indigo-50 text-xs md:text-sm text-indigo-700 rounded">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  <span className="inline-flex items-center px-2 py-1 bg-indigo-50 text-xs text-indigo-700 rounded">
                     {vacancy.bedrooms} {vacancy.bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}
                   </span>
                   {vacancy.bills && (
-                    <span className="inline-flex items-center px-2 py-1 bg-blue-50 text-xs md:text-sm text-blue-700 rounded">
+                    <span className="inline-flex items-center px-2 py-1 bg-blue-50 text-xs text-blue-700 rounded">
                       Bills Included
                     </span>
                   )}
                   {vacancy.parking && (
-                    <span className="inline-flex items-center px-2 py-1 bg-yellow-50 text-xs md:text-sm text-yellow-700 rounded">
-                      Parking Available
+                    <span className="inline-flex items-center px-2 py-1 bg-yellow-50 text-xs text-yellow-700 rounded">
+                      Parking
                     </span>
                   )}
+                  <span className="inline-flex items-center px-2 py-1 bg-purple-50 text-xs text-purple-700 rounded">
+                    {formatDate(vacancy.available)}
+                  </span>
                 </div>
               </div>
               <button
@@ -130,42 +148,27 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
                 className="p-1 hover:bg-gray-100 rounded-full transition-colors ml-2"
               >
                 {isExpanded ? (
-                  <ChevronUp className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
+                  <ChevronUp className="h-5 w-5 text-gray-600" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
+                  <ChevronDown className="h-5 w-5 text-gray-600" />
                 )}
               </button>
             </div>
 
             {/* Location and Date Info */}
-            <div className="mt-2 md:mt-3 text-gray-600">
-              <div className="flex flex-col justify-between md:flex-row md:space-x-4">
-                <p className="text-xs md:text-sm flex text-indigo-700 hover:text-indigo-400 items-center cursor-pointer" onClick={handleOpenMaps}>
-                  <MapPin className="h-3 w-3 md:h-4 md:w-4 mr-1 text-gray-500" />
-                  {vacancy.address}, {vacancy.postcode}
+            <div className="mt-2 text-gray-600">
+              <p className="text-xs flex text-indigo-700 hover:text-indigo-400 items-center cursor-pointer mb-1" onClick={handleOpenMaps}>
+                <MapPin className="h-3 w-3 mr-1 text-gray-500" />
+                {vacancy.address}, {vacancy.postcode}
+              </p>
+              <div className="flex items-center space-x-3 text-xs">
+                <p className="flex items-center">
+                  Posted on {new Date(vacancy.createdAt).toLocaleDateString()}
                 </p>
-                <div className="flex items-center mt-1 md:mt-0 space-x-4">
-                  <p className="text-xs md:text-sm flex items-center">
-                    <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-1 text-gray-500" />
-                    Available from {new Date(vacancy.available).toLocaleDateString()}
-                  </p>
-                  <p className="text-xs md:text-sm flex items-center">
-                    Posted {new Date(vacancy.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
               </div>
             </div>
 
             {/* Quick Info - Not Expanded */}
-            {!isExpanded && (
-              <div className="mt-2 text-sm text-gray-600">
-                <p className="line-clamp-2">
-                  {vacancy.roomType} • {vacancy.bathrooms} {vacancy.bathrooms === 1 ? 'Bathroom' : 'Bathrooms'} 
-                  {vacancy.preferredType.length > 0 && ` • Suitable for ${vacancy.preferredType.join(', ')}`}
-                  {vacancy.nationality && ` • ${vacancy.nationality} preferred`}
-                </p>
-              </div>
-            )}
 
             {/* Expanded View */}
             {isExpanded && (
