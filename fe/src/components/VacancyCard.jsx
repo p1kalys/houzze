@@ -40,15 +40,13 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
 
   return (
     <>
-      <div
-        className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ${
-          isExpanded ? 'ring-2 ring-indigo-500' : 'hover:shadow-lg'
-        }`}
-      >
+      <div className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ${
+        isExpanded ? 'ring-2 ring-indigo-500' : 'hover:shadow-lg'
+      }`}>
         <div className="flex flex-row">
           {/* Image Section - Left Side (Only show when not expanded) */}
           {!isExpanded && vacancy.images && vacancy.images.length > 0 && (
-            <div className="relative w-1/3 h-32 md:h-48 cursor-pointer" onClick={() => setShowImagePopup(true)}>
+            <div className="relative w-1/3 h-24 md:h-32 cursor-pointer" onClick={() => setShowImagePopup(true)}>
               <img
                 src={vacancy.images[currentImageIndex]}
                 alt={`Property ${currentImageIndex + 1}`}
@@ -86,6 +84,11 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
                   </div>
                 </>
               )}
+              {/* Price Badge */}
+              <div className="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded-md shadow-sm">
+                <span className="text-sm md:text-base font-semibold">£{vacancy.rent}</span>
+                <span className="text-xs md:text-sm">/month</span>
+              </div>
             </div>
           )}
 
@@ -93,12 +96,38 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
           <div className="p-2 md:p-4 flex-1">
             {/* Header with Title and Expand Button */}
             <div className="flex justify-between items-start cursor-pointer" onClick={onToggle}>
-              <h2 className="text-base md:text-xl font-semibold text-gray-800">
-                {truncateText(vacancy.description, 100)}
-              </h2>
+              <div className="flex-1">
+                {/* Price for mobile when no image */}
+                {(!vacancy.images || vacancy.images.length === 0) && (
+                  <div className="mb-2">
+                    <span className="bg-green-600 text-white px-2 py-1 rounded-md text-sm md:text-base font-semibold">
+                      £{vacancy.rent}/month
+                    </span>
+                  </div>
+                )}
+                <h2 className="text-base md:text-xl font-semibold text-gray-800">
+                  {truncateText(vacancy.description, 100)}
+                </h2>
+                {/* Key Features Row */}
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <span className="inline-flex items-center px-2 py-1 bg-indigo-50 text-xs md:text-sm text-indigo-700 rounded">
+                    {vacancy.bedrooms} {vacancy.bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}
+                  </span>
+                  {vacancy.bills && (
+                    <span className="inline-flex items-center px-2 py-1 bg-blue-50 text-xs md:text-sm text-blue-700 rounded">
+                      Bills Included
+                    </span>
+                  )}
+                  {vacancy.parking && (
+                    <span className="inline-flex items-center px-2 py-1 bg-yellow-50 text-xs md:text-sm text-yellow-700 rounded">
+                      Parking Available
+                    </span>
+                  )}
+                </div>
+              </div>
               <button
                 onClick={onToggle}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors ml-2"
               >
                 {isExpanded ? (
                   <ChevronUp className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
@@ -108,21 +137,35 @@ export const VacancyCard = ({ vacancy, isExpanded, onToggle }) => {
               </button>
             </div>
 
-            {/* Basic Details */}
-            <div className="mt-1 md:mt-2 text-gray-600">
+            {/* Location and Date Info */}
+            <div className="mt-2 md:mt-3 text-gray-600">
               <div className="flex flex-col justify-between md:flex-row md:space-x-4">
-                <p
-                  className="text-xs md:text-sm flex text-indigo-700 hover:text-indigo-400 items-center cursor-pointer"
-                  onClick={handleOpenMaps}
-                >
+                <p className="text-xs md:text-sm flex text-indigo-700 hover:text-indigo-400 items-center cursor-pointer" onClick={handleOpenMaps}>
                   <MapPin className="h-3 w-3 md:h-4 md:w-4 mr-1 text-gray-500" />
                   {vacancy.address}, {vacancy.postcode}
                 </p>
-                <p className="text-xs md:text-sm flex items-center mt-1 md:mt-0">
-                  <span>Published on {new Date(vacancy.createdAt).toLocaleDateString()}</span>
-                </p>
+                <div className="flex items-center mt-1 md:mt-0 space-x-4">
+                  <p className="text-xs md:text-sm flex items-center">
+                    <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-1 text-gray-500" />
+                    Available from {new Date(vacancy.available).toLocaleDateString()}
+                  </p>
+                  <p className="text-xs md:text-sm flex items-center">
+                    Posted {new Date(vacancy.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             </div>
+
+            {/* Quick Info - Not Expanded */}
+            {!isExpanded && (
+              <div className="mt-2 text-sm text-gray-600">
+                <p className="line-clamp-2">
+                  {vacancy.roomType} • {vacancy.bathrooms} {vacancy.bathrooms === 1 ? 'Bathroom' : 'Bathrooms'} 
+                  {vacancy.preferredType.length > 0 && ` • Suitable for ${vacancy.preferredType.join(', ')}`}
+                  {vacancy.nationality && ` • ${vacancy.nationality} preferred`}
+                </p>
+              </div>
+            )}
 
             {/* Expanded View */}
             {isExpanded && (

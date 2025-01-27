@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Menu, X, Newspaper } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export const Navbar = ({
   isLoggedIn,
@@ -17,7 +17,6 @@ export const Navbar = ({
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center space-x-2">
-            <Newspaper className="h-8 w-8" />
             <span className="text-xl font-bold">Houzze</span>
           </div>
 

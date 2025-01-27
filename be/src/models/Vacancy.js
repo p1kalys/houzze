@@ -27,7 +27,6 @@ const VacancySchema = new mongoose.Schema({
 });
 
 
-VacancySchema.index({ createdAt: 1 }, { expireAfterSeconds: 29 * 24 * 60 * 60 });
 
 const Vacancy = mongoose.model('Vacancy', VacancySchema);
 
